@@ -1,0 +1,499 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <title>FundedFirm 20% Consistency Tool By Huzaif </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    /* ================= ROOT ================= */
+:root{
+  --bg:#020617;
+  --panel:#020b1c;
+  --card:linear-gradient(180deg,#020617,#020b1c);
+  --blue:#38bdf8;
+  --green:#22c55e;
+  --red:#ef4444;
+  --yellow:#facc15;
+  --text:#e5e7eb;
+  --glass:rgba(255,255,255,0.04);
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ================= BODY ================= */
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top,#020b1c,#020617 60%),
+    linear-gradient(180deg,#020617,#020617);
+  font-family:system-ui,Segoe UI,Roboto;
+  color:var(--text);
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:70px 12px 20px;
+}
+
+/* ================= HEADER ================= */
+.header{
+  position:fixed;
+  top:0;left:0;right:0;
+  background:linear-gradient(180deg,#020617,#020b1c);
+  padding:10px;
+  display:flex;
+  justify-content:center;
+  z-index:20;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  /* Optional blur (safe fallback) */
+-webkit-backdrop-filter: blur(6px);
+backdrop-filter: blur(6px);
+
+}
+
+.header button{
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+  border:none;
+  color:#052e16;
+  padding:10px 18px;
+  border-radius:16px;
+  font-weight:800;
+  letter-spacing:.3px;
+  box-shadow:0 10px 30px rgba(56,189,248,.35);
+  transition:.25s ease;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+}
+
+.header button:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+}
+
+/* ================= CARD ================= */
+.card{
+  margin-top: 70px;
+  width:100%;
+  max-width:460px;
+  background:var(--card);
+  padding:22px;
+  border-radius:22px;
+  box-shadow:
+    0 25px 70px rgba(10, 120, 150, 0.9),
+    inset 0 0 0 1px rgba(255,255,255,.04);
+  animation:cardIn .6s ease;
+}
+
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+h1{
+  text-align:center;
+  color:var(--blue);
+  font-size:20px;
+  margin-bottom:14px;
+  letter-spacing:.4px;
+}
+
+/* ================= DAYS ================= */
+.days{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.day{
+  display:flex;
+  gap:8px;
+}
+
+/* ================= INPUTS ================= */
+.day input,
+.modal input{
+  flex:1;
+  background:var(--panel);
+  border:none;
+  border-radius:14px;
+  padding:13px;
+  color:#fff;
+  font-size:15px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
+  transition:.25s ease;
+}
+
+.day input::placeholder,
+.modal input::placeholder{
+  color:#94a3b8;
+}
+
+.day input:focus,
+.modal input:focus{
+  outline:none;
+  box-shadow:
+    inset 0 0 0 1px var(--blue),
+    0 0 0 3px rgba(56,189,248,.18);
+}
+
+/* ================= REMOVE BUTTON ================= */
+.day button{
+  background:linear-gradient(135deg,#1e293b,#020617);
+  border:none;
+  color:#fff;
+  border-radius:14px;
+  padding:0 14px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.day button:hover{
+  background:#ef4444;
+}
+
+/* ================= CONTROLS ================= */
+.controls{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+
+.controls button{
+  flex:1;
+  padding:13px;
+  border:none;
+  border-radius:16px;
+  font-weight:800;
+  letter-spacing:.4px;
+  cursor:pointer;
+  transition:.25s ease;
+}
+
+.add{
+  background:linear-gradient(135deg,#1e293b,#0f172a);
+  color:#e5e7eb;
+}
+
+.check{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#052e16;
+  box-shadow:0 12px 30px rgba(34,197,94,.35);
+}
+
+.controls button:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+}
+
+/* ================= RESULT ================= */
+.result{
+  margin-top:18px;
+  background:linear-gradient(180deg,#020b1c,#020617);
+  padding:16px;
+  border-radius:18px;
+  font-size:14px;
+  line-height:1.9;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.04),
+    0 20px 45px rgba(0,0,0,.85);
+  animation:fadeData .4s ease;
+}
+
+@keyframes fadeData{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.pass{color:var(--green);font-weight:800}
+.fail{color:var(--red);font-weight:800}
+.info{color:var(--blue);font-weight:800}
+
+hr{
+  border:none;
+  border-top:1px solid rgba(255,255,255,.06);
+  margin:10px 0;
+}
+/* ===== CLEAN POSITION SIZE MODAL (FII STYLE) ===== */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:50;
+}
+
+.modal{
+  width:100%;
+  max-width:420px;
+  background:#020617;
+  padding:24px;
+  border-radius:18px;
+  box-shadow:0 30px 80px rgba(0,0,0,.9);
+}
+
+/* TITLE */
+.modal h2{
+  text-align:center;
+  color:#facc15;
+  margin-bottom:18px;
+  font-size:22px;
+  letter-spacing:.4px;
+}
+
+/* LABELS */
+.modal label{
+  display:block;
+  font-size:13px;
+  color:#94a3b8;
+  margin-bottom:6px;
+}
+
+/* INPUTS */
+.modal input{
+  width:100%;
+  background:#020b1c;
+  border:1px solid #1e293b;
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:16px;
+  color:#fff;
+  font-size:16px;
+}
+
+.modal input::placeholder{
+  color:#64748b;
+}
+
+.modal input:focus{
+  outline:none;
+  border-color:#38bdf8;
+}
+
+/* BUTTONS */
+.modal .calc{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#38bdf8;
+  color:#052e16;
+  font-weight:800;
+  font-size:16px;
+  margin-top:6px;
+}
+
+.modal .close{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#1e293b;
+  color:#e5e7eb;
+  font-weight:700;
+  margin-top:10px;
+}
+
+/* RESULT */
+#lotResult{
+  margin-top:16px;
+  background:#020b1c;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #1e293b;
+}
+
+#lotResult .row{
+  font-size:15px;
+  font-weight:700;
+}
+
+/* ===== INSTITUTIONAL STATUS GLOW ===== */
+
+/* Default (no glow until result shown) */
+.result{
+  position:relative;
+  transition:box-shadow .35s ease, border .35s ease;
+}
+
+/* PASS GLOW */
+.result:has(.pass){
+  box-shadow:
+    0 0 0 1px rgba(34,197,94,.35),
+    0 0 25px rgba(34,197,94,.25),
+    inset 0 0 0 1px rgba(34,197,94,.25);
+}
+
+/* FAIL GLOW */
+.result:has(.fail){
+  box-shadow:
+    0 0 0 1px rgba(239,68,68,.35),
+    0 0 25px rgba(239,68,68,.25),
+    inset 0 0 0 1px rgba(239,68,68,.25);
+}
+
+  </style>
+  </head>
+
+  <body>
+    
+  <!-- ===== HEADER ===== -->
+  <div class="header" >
+    <button onclick="openSizer()">📐 Gold Position Calculator</button>
+  </div>
+
+  <!-- ===== MAIN CARD ===== -->
+  <div class="card">
+  <h1>FundedFirm 20% Consistency</h1>
+
+  <div class="days" id="days">
+    <div class="day">
+      <input type="text" inputmode="decimal" placeholder="Day 1 ( Enter PnL Value)">
+      <button onclick="removeDay(this)">✕</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="add" onclick="addDay()">+ Add Day</button>
+    <button class="check" onclick="calculate()">Check</button>
+  </div>
+
+  <div class="result" id="result" style="display:none"></div>
+  </div>
+
+  <!-- ===== POSITION SIZE ===== -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>XAUUSD Position Size</h2>
+
+      <label>Max Risk ($)</label>
+<input id="risk" type="text" inputmode="decimal" placeholder="Example: 500">
+
+<label>SL Loss ($ from TradingView)</label>
+<input id="slusd" type="text" inputmode="decimal" placeholder="Example: 1200">
+
+
+      <button class="calc" onclick="calcLot()">Calculate</button>
+
+      <div class="result" id="lotResult" style="display:none"></div>
+
+      <button class="close" onclick="closeSizer()">Close</button>
+      
+    </div>
+  </div>
+
+  <script>
+  /* ===== ADD / REMOVE DAY ===== */
+  function addDay(){
+    const days=document.getElementById("days");
+    const count=days.children.length+1;
+
+    days.insertAdjacentHTML("beforeend",`
+      <div class="day">
+        <input type="text" inputmode="decimal"
+          placeholder="Day ${count} ( Enter PnL Value)">
+        <button onclick="removeDay(this)">✕</button>
+      </div>
+    `);
+  }
+
+  function removeDay(btn){
+    btn.parentElement.remove();
+  }
+
+  /* ===== CONSISTENCY ===== */
+  function calculate(){
+  const vals=[...document.querySelectorAll(".day input")]
+    .map(i=>parseFloat(i.value))
+    .filter(v=>!isNaN(v));
+
+  const box=document.getElementById("result");
+  if(!vals.length){alert("Enter values");return;}
+
+  // ✅ NET TOTAL (profit + loss)
+  const total = vals.reduce((a,b)=>a+b,0);
+
+  // ✅ Highest positive day
+  const profits = vals.filter(v=>v>0);
+  const highest = profits.length ? Math.max(...profits) : 0;
+
+  const allowed = total * 0.20;
+  const pass = total>0 && highest <= allowed;
+
+  const requiredTotal = highest / 0.20;
+  const extraProfit = Math.max(0, requiredTotal - total);
+  const lossNeeded = Math.max(0, total - requiredTotal);
+  const todayMax = Math.max(0, allowed - highest);
+
+  box.style.display="block";
+  box.innerHTML=`
+<div class="row"><span>Total Profit (Net)</span><span>$${total.toFixed(2)}</span></div>
+<div class="row"><span>20% Limit</span><span>$${allowed.toFixed(2)}</span></div>
+<div class="row"><span>Highest Day</span><span>$${highest.toFixed(2)}</span></div>
+<hr>
+<div class="row"><span>Status</span>
+<span class="${pass?"pass":"fail"}">${pass?"PASS ✅":"FAIL ❌"}</span></div>
+
+<hr>
+<div class="row info"><span>Today Max Safe Profit</span>
+<span>$${todayMax.toFixed(2)}</span></div>
+
+${!pass?`
+<hr>
+<div class="row"><span class="info">Extra Profit Needed</span>
+<span>$${extraProfit.toFixed(2)}</span></div>
+
+<div class="row"><span class="info">OR Loss Needed</span>
+<span>$${lossNeeded.toFixed(2)}</span></div>
+`:""}
+`;
+}
+
+
+  /* ===== GOLD POSITION SIZE ===== */
+  function openSizer(){
+    document.getElementById("overlay").style.display="flex";
+  }
+
+  function closeSizer(){
+    document.getElementById("overlay").style.display="none";
+  }
+
+  function calcLot(){
+    const risk=parseFloat(document.getElementById("risk").value);
+    const slLoss=parseFloat(document.getElementById("slusd").value);
+    const out=document.getElementById("lotResult");
+
+    if(!risk || !slLoss){
+      alert("Enter Risk & SL Loss");
+      return;
+    }
+
+    const lot=(risk/slLoss);
+
+    out.style.display="block";
+  out.innerHTML=`
+  <div class="row">
+    <span>Recommended Lot Size</span>
+    <span>${lot.toFixed(2)}</span>
+  </div>
+  `;
+
+  }
+  </script>
+
+  </body>
+  </html>
