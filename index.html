@@ -1,3 +1,4 @@
+
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -44,15 +45,43 @@ body{
   position:fixed;
   top:0;left:0;right:0;
   background:linear-gradient(180deg,#020617,#020b1c);
-  padding:10px;
+  padding:10px 12px;
   display:flex;
-  justify-content:center;
+  flex-direction:column; /* IMPORTANT */
+  align-items:center;
   z-index:20;
   border-bottom:1px solid rgba(255,255,255,.05);
-  /* Optional blur (safe fallback) */
--webkit-backdrop-filter: blur(6px);
-backdrop-filter: blur(6px);
 
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* BUTTON ROW */
+.top-controls{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap; /* mobile friendly */
+}
+
+/* CONSISTENCY BOX */
+.consistency-box{
+  margin-top:6px;
+  text-align:center;
+}
+
+.consistency-box label{
+  font-size:12px;
+  color:#94a3b8;
+}
+
+.consistency-box select{
+  margin-top:4px;
+  padding:8px 14px;
+  border-radius:12px;
+  background:#020b1c;
+  color:white;
+  border:1px solid #1e293b;
 }
 
 .header button{
@@ -67,6 +96,7 @@ backdrop-filter: blur(6px);
   transition:.25s ease;
   margin-top: 10px;
   margin-bottom: 10px;
+  margin-left: 20px;
 
 }
 
@@ -351,9 +381,44 @@ hr{
   <body>
     
   <!-- ===== HEADER ===== -->
-  <div class="header" >
-    <button onclick="openSizer()">📐 Gold Position Calculator</button>
+
+<div class="header">
+
+  <!-- BUTTON ROW -->
+  <div class="top-controls">
+    <button onclick="goHome()">🏠 Home</button>
+    <button onclick="openSizer()">📐 Gold Calculator</button>
+    <button onclick="loadPrevious()">📊 Previous Trades</button>
   </div>
+
+  <!-- CONSISTENCY -->
+  <div class="consistency-box">
+    <label>Consistency %</label>
+    <input id="dailyTarget" type="text" inputmode="decimal"
+  placeholder="Daily Target ($)"
+  style="
+    margin-top:6px;
+    padding:8px 12px;
+    border-radius:12px;
+    background:#020b1c;
+    color:white;
+    border:1px solid #1e293b;
+    width:150px;
+    text-align:center;
+  ">
+    <select id="consistencyPercent">
+      <option value="0.10">10%</option>
+      <option value="0.15">15%</option>
+      <option value="0.20" selected>20%</option>
+      <option value="0.25">25%</option>
+      <option value="0.30">30%</option>
+      <option value="0.35">35%</option>
+      <option value="0.40">40%</option>
+      <option value="0.45">45%</option>
+    </select>
+  </div>
+
+</div>
 
   <!-- ===== MAIN CARD ===== -->
   <div class="card">
@@ -416,50 +481,65 @@ hr{
 
   /* ===== CONSISTENCY ===== */
   function calculate(){
-  const vals=[...document.querySelectorAll(".day input")]
-    .map(i=>parseFloat(i.value))
-    .filter(v=>!isNaN(v));
 
-  const box=document.getElementById("result");
-  if(!vals.length){alert("Enter values");return;}
+  const vals = [...document.querySelectorAll(".day input")]
+    .map(i => parseFloat(i.value))
+    .filter(v => !isNaN(v));
 
-  // ✅ NET TOTAL (profit + loss)
+  const box = document.getElementById("result");
+  if(!vals.length){ alert("Enter values"); return; }
+
   const total = vals.reduce((a,b)=>a+b,0);
 
-  // ✅ Highest positive day
   const profits = vals.filter(v=>v>0);
   const highest = profits.length ? Math.max(...profits) : 0;
 
-  const allowed = total * 0.20;
-  const pass = total>0 && highest <= allowed;
+  const percent = parseFloat(document.getElementById("consistencyPercent").value);
+  const allowed = total * percent;
 
-  const requiredTotal = highest / 0.20;
+  const pass = total > 0 && highest <= allowed;
+
+  const requiredTotal = highest / percent;
   const extraProfit = Math.max(0, requiredTotal - total);
   const lossNeeded = Math.max(0, total - requiredTotal);
   const todayMax = Math.max(0, allowed - highest);
 
-  box.style.display="block";
-  box.innerHTML=`
-<div class="row"><span>Total Profit (Net)</span><span>$${total.toFixed(2)}</span></div>
-<div class="row"><span>20% Limit</span><span>$${allowed.toFixed(2)}</span></div>
-<div class="row"><span>Highest Day</span><span>$${highest.toFixed(2)}</span></div>
-<hr>
-<div class="row"><span>Status</span>
-<span class="${pass?"pass":"fail"}">${pass?"PASS ✅":"FAIL ❌"}</span></div>
+  const daily = parseFloat(document.getElementById("dailyTarget").value);
+  let daysNeeded = 0;
 
-<hr>
-<div class="row info"><span>Today Max Safe Profit</span>
-<span>$${todayMax.toFixed(2)}</span></div>
+  if(daily && daily > 0){
+    const remaining = Math.max(0, requiredTotal - total);
+    daysNeeded = Math.ceil(remaining / daily);
+  }
 
-${!pass?`
-<hr>
-<div class="row"><span class="info">Extra Profit Needed</span>
-<span>$${extraProfit.toFixed(2)}</span></div>
+  box.style.display = "block";
 
-<div class="row"><span class="info">OR Loss Needed</span>
-<span>$${lossNeeded.toFixed(2)}</span></div>
-`:""}
-`;
+  let html = "";
+
+  html += '<div class="row"><span>Total Profit (Net)</span><span>$' + total.toFixed(2) + '</span></div>';
+  html += '<div class="row"><span>' + (percent*100).toFixed(0) + '% Limit</span><span>$' + allowed.toFixed(2) + '</span></div>';
+  html += '<div class="row"><span>Highest Day</span><span>$' + highest.toFixed(2) + '</span></div>';
+
+  html += '<hr>';
+
+  html += '<div class="row"><span>Status</span><span class="' + (pass ? "pass" : "fail") + '">' + (pass ? "PASS ✅" : "FAIL ❌") + '</span></div>';
+
+  html += '<hr>';
+
+  html += '<div class="row info"><span>Today Max Safe Profit</span><span>$' + todayMax.toFixed(2) + '</span></div>';
+
+  if(!pass){
+    html += '<hr>';
+    html += '<div class="row"><span class="info">Extra Profit Needed</span><span>$' + extraProfit.toFixed(2) + '</span></div>';
+    html += '<div class="row"><span class="info">OR Loss Needed</span><span>$' + lossNeeded.toFixed(2) + '</span></div>';
+  }
+
+  if(daily && daily > 0){
+    html += '<hr>';
+    html += '<div class="row info"><span>Days Needed (@$' + daily + ')</span><span>' + daysNeeded + ' days</span></div>';
+  }
+
+  box.innerHTML = html;
 }
 
 
@@ -493,6 +573,52 @@ ${!pass?`
   `;
 
   }
+
+
+  // ===== PREVIOUS DATA (AUTO LOAD) =====
+function loadPrevious(){
+
+  const data = [
+    4.74,-19.46,-1.60,-39.30,26.49,-16.61,
+    32.25,30.72,-31.89,33.12,-21.63,
+    -31.82,-28.77,3.50,10.74,-22.11,
+    -5.77,2.86,31.18,-15.26,-6.46,
+    -39.46,-3.27,13.51,31.83
+  ];
+
+  const days = document.getElementById("days");
+
+  // clear old inputs
+  days.innerHTML = "";
+
+  // add new inputs auto
+  data.forEach((val, i)=>{
+    days.insertAdjacentHTML("beforeend",`
+      <div class="day">
+        <input type="text" value="${val}" inputmode="decimal"
+          placeholder="Day ${i+1} ( Enter PnL Value)">
+        <button onclick="removeDay(this)">✕</button>
+      </div>
+    `);
+  });
+
+}
+
+// ===== HOME RESET =====
+function goHome(){
+  const days = document.getElementById("days");
+  const result = document.getElementById("result");
+
+  days.innerHTML = `
+    <div class="day">
+      <input type="text" inputmode="decimal" placeholder="Day 1 ( Enter PnL Value)">
+      <button onclick="removeDay(this)">✕</button>
+    </div>
+  `;
+
+  result.style.display = "none";
+}
+
   </script>
 
   </body>
