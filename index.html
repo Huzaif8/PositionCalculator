@@ -1,4 +1,5 @@
 
+
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -374,8 +375,156 @@ hr{
     0 0 25px rgba(239,68,68,.25),
     inset 0 0 0 1px rgba(239,68,68,.25);
 }
+/* ===== TP/SL SECTION IMPROVED ===== */
 
-  </style>
+
+#tpslSection{
+  margin-top: 125px;
+}
+
+#tpslSection .card{
+  max-width:420px;
+  margin:auto;
+}
+
+/* BOX */
+.tradeBox{
+  background:linear-gradient(180deg,#020617,#020b1c);
+  padding:18px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.06);
+  box-shadow:0 10px 40px rgba(0,0,0,0.6);
+  margin-bottom: 25px; 
+}
+
+/* INPUT */
+.tradeBox input{
+  width:100%;
+  padding:13px;
+  margin-bottom:12px;
+  border-radius:12px;
+  border:1px solid #1e293b;
+  background:#020617;
+  color:white;
+  font-size:14px;
+  transition:0.2s;
+}
+
+.tradeBox input:focus{
+  outline:none;
+  border-color:#38bdf8;
+  box-shadow:0 0 0 2px rgba(56,189,248,0.2);
+}
+
+/* TOGGLE */
+.toggle{
+  display:flex;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.toggle button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#1e293b;
+  color:#94a3b8;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.toggle .active{
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+  color:#052e16;
+}
+
+/* TP/SL BUTTON GRID */
+.tpBtns, .slBtns{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.tpBtns button, .slBtns button{
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  background:#1e293b;
+  color:white;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.tpBtns button:hover,
+.slBtns button:hover{
+  background:#38bdf8;
+  color:black;
+}
+
+/* RESULT BOX */
+.tradeBox .result{
+  margin-top:18px;
+  padding:18px;
+  border-radius:18px;
+  background:linear-gradient(180deg,#020b1c,#020617);
+  border:1px solid rgba(239,68,68,0.3);
+  font-size:15px;
+  line-height:2;
+  box-shadow:
+    0 0 0 1px rgba(239,68,68,0.2),
+    0 0 25px rgba(239,68,68,0.15);
+  margin-bottom: 20px;
+}
+
+.tradeBox .row{
+  display:flex;
+  justify-content:space-between;
+  font-size:15px;
+  font-weight:600;
+}
+
+/* PROFIT LOSS */
+.tradeBox .pass{
+  color:#22c55e;
+  font-weight:700;
+}
+
+.tradeBox .fail{
+  color:#ef4444;
+  font-weight:700;
+}
+
+/* BUTTON */
+#tpslSection .check{
+  margin-top:12px;
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#052e16;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.tradeBox + .tradeBox{
+  margin-top: 25px;
+  border-top: 1px solid rgba(230, 239, 244, 0.715);
+  padding-top: 20px;
+}
+
+.tradeBox + .tradeBox{
+  margin-top: 25px;
+  border-top: 1px solid rgba(185, 238, 239, 0.959);
+  padding-top: 20px;
+}
+ 
+ </style>
   </head>
 
   <body>
@@ -386,9 +535,11 @@ hr{
 
   <!-- BUTTON ROW -->
   <div class="top-controls">
-    <button onclick="goHome()">🏠 Home</button>
-    <button onclick="openSizer()">📐 Gold Calculator</button>
-    <button onclick="loadPrevious()">📊 Previous Trades</button>
+    <button type="button" onclick="goHome()">🏠 Home</button>
+<button type="button" onclick="openSizer()">📐 Gold Calculator</button>
+<button type="button" onclick="loadPrevious()">📊 Previous Trades</button>
+<button type="button" onclick="showTPSL()">📊 TP/SL</button>
+
   </div>
 
   <!-- CONSISTENCY -->
@@ -421,6 +572,7 @@ hr{
 </div>
 
   <!-- ===== MAIN CARD ===== -->
+ <div id="homeSection">
   <div class="card">
   <h1>FundedFirm 20% Consistency</h1>
 
@@ -438,7 +590,18 @@ hr{
 
   <div class="result" id="result" style="display:none"></div>
   </div>
+</div>
+  <div id="tpslSection" style="display:none;">
+  <div class="card">
 
+    <h1>📊 TP / SL Calculator</h1>
+
+    <div id="tradeContainer"></div>
+
+    <button class="check" onclick="addTrade()">+ Check Another Trade</button>
+
+  </div>
+</div>
   <!-- ===== POSITION SIZE ===== -->
   <div class="overlay" id="overlay">
     <div class="modal">
@@ -619,6 +782,119 @@ function goHome(){
   result.style.display = "none";
 }
 
+
+
+function showTPSL(){
+  document.getElementById("tpslSection").style.display="block";
+  document.getElementById("tradeContainer").innerHTML="";
+  addTrade();
+}
+
+function addTrade(){
+
+  const html = `
+  <div class="tradeBox">
+
+    <input class="entry" placeholder="Entry Price">
+
+    <div class="toggle">
+      <button class="active" onclick="setSide(this,'long')">LONG</button>
+      <button onclick="setSide(this,'short')">SHORT</button>
+    </div>
+
+    <input class="lot" placeholder="Lot Size">
+
+    <input class="tp" placeholder="TP ($)">
+    <div class="tpBtns">
+      ${[5,7,10,12,15,17,20,25,30].map(v=>`<button onclick="setVal(this,'tp',${v})">${v}</button>`).join("")}
+    </div>
+
+    <input class="sl" placeholder="SL ($)">
+    <div class="slBtns">
+      ${[5,7,10,12,15,17,20,25,30].map(v=>`<button onclick="setVal(this,'sl',${v})">${v}</button>`).join("")}
+    </div>
+
+    <div class="result"></div>
+
+  </div>
+  `;
+
+  document.getElementById("tradeContainer").insertAdjacentHTML("beforeend",html);
+  bindTrade();
+}
+
+function setSide(btn,type){
+  const box = btn.closest(".tradeBox");
+  box.querySelectorAll(".toggle button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  box.dataset.side = type;
+  calcTrade(box);
+}
+
+function setVal(btn,type,val){
+  const box = btn.closest(".tradeBox");
+  box.querySelector(`.${type}`).value = val;
+  calcTrade(box);
+}
+
+function bindTrade(){
+  document.querySelectorAll(".tradeBox").forEach(box=>{
+    if(!box.dataset.side) box.dataset.side="long";
+
+    box.querySelectorAll("input").forEach(inp=>{
+      inp.addEventListener("input", ()=>calcTrade(box));
+    });
+  });
+}
+
+function calcTrade(box){
+
+  const entry = parseFloat(box.querySelector(".entry").value);
+  const lot = parseFloat(box.querySelector(".lot").value);
+  const tp = parseFloat(box.querySelector(".tp").value);
+  const sl = parseFloat(box.querySelector(".sl").value);
+  const side = box.dataset.side || "long";
+
+  if(!entry || !lot){
+    box.querySelector(".result").innerHTML="";
+    return;
+  }
+
+  let tpPrice, slPrice;
+
+  if(side==="long"){
+    tpPrice = entry + (tp||0);
+    slPrice = entry - (sl||0);
+  } else {
+    tpPrice = entry - (tp||0);
+    slPrice = entry + (sl||0);
+  }
+
+  const profit = (tp||0)*lot*100;
+  const loss = (sl||0)*lot*100;
+
+  box.querySelector(".result").innerHTML = `
+    <div class="row"><span>TP</span><span>${tpPrice.toFixed(2)}</span></div>
+    <div class="row"><span>SL</span><span>${slPrice.toFixed(2)}</span></div>
+    <hr>
+    <div class="row pass"><span>Profit</span><span>$${profit.toFixed(2)}</span></div>
+    <div class="row fail"><span>Loss</span><span>$${loss.toFixed(2)}</span></div>
+  `;
+}
+
+
+function showTPSL(){
+  document.getElementById("homeSection").style.display="none";
+  document.getElementById("tpslSection").style.display="block";
+
+  document.getElementById("tradeContainer").innerHTML="";
+  addTrade();
+}
+
+function goHome(){
+  document.getElementById("homeSection").style.display="block";
+  document.getElementById("tpslSection").style.display="none";
+}   
   </script>
 
   </body>
