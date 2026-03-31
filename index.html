@@ -1,5 +1,6 @@
 
 
+
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -523,6 +524,29 @@ hr{
   border-top: 1px solid rgba(185, 238, 239, 0.959);
   padding-top: 20px;
 }
+.lotBtns{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.lotBtns button{
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  background:#1e293b;
+  color:white;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.lotBtns button:hover{
+  background:#38bdf8;
+  color:black;
+}
  
  </style>
   </head>
@@ -742,7 +766,11 @@ hr{
 function loadPrevious(){
 
   const data = [
-      4.74, -19.46, -1.6, -39.3, 26.49, -16.61, 32.25, 30.72, -31.89, 33.12, -21.63, -31.82, -28.77, 3.5, 10.74, -22.11, -5.77, 2.86, 31.18, -15.26, -6.46, -39.46, -3.27, 13.51, 31.83, -35.71, -31.22, 27.24, 31.85, 28.8, -4.15, 36.33
+    4.74,-19.46,-1.60,-39.30,26.49,-16.61,
+    32.25,30.72,-31.89,33.12,-21.63,
+    -31.82,-28.77,3.50,10.74,-22.11,
+    -5.77,2.86,31.18,-15.26,-6.46,
+    -39.46,-3.27,13.51,31.83,-35.71,-31.22,27.24,31.85,28.68
   ];
 
   const days = document.getElementById("days");
@@ -798,7 +826,11 @@ function addTrade(){
       <button onclick="setSide(this,'short')">SHORT</button>
     </div>
 
-    <input class="lot" placeholder="Lot Size">
+    <input class="lot" placeholder="Lot Size" value="0.01">
+
+<div class="lotBtns">
+  ${[0.01,0.02,0.03,0.05,0.07,0.1,0.2,0.3].map(v=>`<button onclick="setVal(this,'lot',${v})">${v}</button>`).join("")}
+</div>
 
     <input class="tp" placeholder="TP ($)">
     <div class="tpBtns">
